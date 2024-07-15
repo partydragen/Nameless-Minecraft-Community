@@ -17,20 +17,32 @@ class Minecraft_Community_Module extends Module {
         $this->_mccommunity_language = $mccommunity_language;
 
         $name = 'Minecraft Community';
-        $author = '<a href="https://www.mccommunity.net/" target="_blank" rel="nofollow noopener">Minecraft Community</a>, <a href="https://partydragen.com" target="_blank" rel="nofollow noopener">Partydragen</a>';
-        $module_version = '1.0.0';
+        $author = '<a href="https://www.mccommunity.net/" target="_blank" rel="nofollow noopener">Minecraft Community</a>';
+        $module_version = '1.0.1';
         $nameless_version = '2.1.2';
 
         parent::__construct($this, $name, $author, $module_version, $nameless_version);
-        
+
         Integrations::getInstance()->registerIntegration(new MinecraftCommunityIntegration($language));
-        
+
         NamelessOAuth::getInstance()->registerProvider('minecraft-community', 'Minecraft Community', [
             'class' => MinecraftCommunityProvider::class,
             'user_id_name' => 'id',
             'scope_id_name' => 'identify',
             'icon' => 'fa-solid fa-globe',
             'verify_email' => static fn () => true,
+            'logo_url' => 'https://mccommunity.net/core/assets/img/logo.png',
+            'logo_css' => [
+                'width' => '20px',
+                'height' => '20px',
+                'vertical-align' => 'middle',
+                'margin-bottom' => '-2px',
+                'margin-top' => '-2px',
+            ],
+            'button_css' => [
+                'background-color' => '#5865F2',
+                'color' => '#FFFFFF',
+            ],
         ]);
 
         $endpoints->loadEndpoints(ROOT_PATH . '/modules/Minecraft Community/includes/endpoints');
@@ -55,15 +67,12 @@ class Minecraft_Community_Module extends Module {
     public function onPageLoad($user, $pages, $cache, $smarty, $navs, $widgets, $template) {
         // Check for module updates
         if (isset($_GET['route']) && $user->isLoggedIn() && $user->hasPermission('admincp.update')) {
-            // Page belong to this module?
-            $page = $pages->getActivePage();
-            if ($page['module'] == 'Minecraft Community') {
-
-                $cache->setCache('giveaway_module_cache');
+            try {
+                $cache->setCache('minecraft_community_module_cache');
                 if ($cache->isCached('update_check')) {
                     $update_check = $cache->retrieve('update_check');
                 } else {
-                    $update_check = Giveaway_Module::updateCheck();
+                    $update_check = self::updateCheck();
                     $cache->store('update_check', $update_check, 3600);
                 }
 
@@ -82,6 +91,8 @@ class Minecraft_Community_Module extends Module {
                         'NAMELESS_UPDATE_LINK' => Output::getClean($update_check->link)
                     ));
                 }
+            } catch (Exception $e) {
+
             }
         }
     }
@@ -91,8 +102,8 @@ class Minecraft_Community_Module extends Module {
     }
 
     private static function updateCheck() {
-        $current_version = Util::getSetting('nameless_version');
-        $uid = Util::getSetting('unique_id');
+        $current_version = Settings::get('nameless_version');
+        $uid = Settings::get('unique_id');
 
         $enabled_modules = Module::getModules();
         foreach ($enabled_modules as $enabled_item) {

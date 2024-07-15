@@ -7,8 +7,8 @@ The Minecraft Community module allows you to integrate the Minecraft Community t
 ## Installation
 - Upload the contents of the **upload** directory straight into your NamelessMC installation's directory
 - Activate the module in the StaffCP -> Modules tab
-- Go to [https://mccommunity.net/](https://mccommunity.net/)
-- Communities -> Add Community
+- Go to [https://mccommunity.net/nameless/](https://mccommunity.net/nameless/)
+- Click on "Add Community"
 - Enter your NamelessMC API URL and Key
 
 ## Contact me:
