@@ -28,9 +28,10 @@ class Minecraft_Community_Module extends Module {
         NamelessOAuth::getInstance()->registerProvider('minecraft-community', 'Minecraft Community', [
             'class' => MinecraftCommunityProvider::class,
             'user_id_name' => 'id',
-            'scope_id_name' => 'identify',
+            'scope_id_name' => 'identity',
             'icon' => 'fa-solid fa-globe',
             'verify_email' => static fn () => true,
+            'display_name' => 'Minecraft Community',
             'logo_url' => 'https://mccommunity.net/core/assets/img/logo.png',
             'logo_css' => [
                 'width' => '20px',

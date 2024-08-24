@@ -68,7 +68,7 @@ class MinecraftCommunityProvider extends AbstractProvider {
      */
     protected function getDefaultScopes() {
         return [
-            'identify'
+            'identity'
         ];
     }
 
