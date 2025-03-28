@@ -19,7 +19,7 @@ class Minecraft_Community_Module extends Module {
         $name = 'Minecraft Community';
         $author = '<a href="https://www.mccommunity.net/" target="_blank" rel="nofollow noopener">Minecraft Community</a>';
         $module_version = '1.0.1';
-        $nameless_version = '2.1.2';
+        $nameless_version = '2.2.0';
 
         parent::__construct($this, $name, $author, $module_version, $nameless_version);
 
@@ -28,7 +28,11 @@ class Minecraft_Community_Module extends Module {
         NamelessOAuth::getInstance()->registerProvider('minecraft-community', 'Minecraft Community', [
             'class' => MinecraftCommunityProvider::class,
             'user_id_name' => 'id',
-            'scope_id_name' => 'identity',
+            'scope_id_name' => 'identify',
+            'scopes' => [
+                'identity',
+                'email'
+            ],
             'icon' => 'fa-solid fa-globe',
             'verify_email' => static fn () => true,
             'display_name' => 'Minecraft Community',
@@ -79,7 +83,7 @@ class Minecraft_Community_Module extends Module {
 
                 $update_check = json_decode($update_check);
                 if (!isset($update_check->error) && !isset($update_check->no_update) && isset($update_check->new_version)) {
-                    $smarty->assign(array(
+                    $template->getEngine()->addVariables([
                         'NEW_UPDATE' => (isset($update_check->urgent) && $update_check->urgent == 'true') ? $this->mccommunity_language->get('general', 'new_urgent_update_available_x', ['module' => $this->getName()]) : $this->mccommunity_language->get('general', 'new_update_available_x', ['module' => $this->getName()]),
                         'NEW_UPDATE_URGENT' => (isset($update_check->urgent) && $update_check->urgent == 'true'),
                         'CURRENT_VERSION' => $this->mccommunity_language->get('general', 'current_version_x', [
@@ -90,7 +94,7 @@ class Minecraft_Community_Module extends Module {
                         ]),
                         'NAMELESS_UPDATE' => $this->mccommunity_language->get('general', 'view_resource'),
                         'NAMELESS_UPDATE_LINK' => Output::getClean($update_check->link)
-                    ));
+                    ]);
                 }
             } catch (Exception $e) {
 
